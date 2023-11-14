@@ -4,7 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EventsModule } from './events/events.module';
 import { DATABASE_URL, DATABASE_NAME } from './config/constants';
-import { MessagesModule } from './chat/messages.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
