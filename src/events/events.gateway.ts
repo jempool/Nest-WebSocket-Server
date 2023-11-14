@@ -6,6 +6,8 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
+import { MessagesService } from 'src/messages/messages.service';
 
 @WebSocketGateway({
   cors: {
@@ -13,23 +15,25 @@ import { Server, Socket } from 'socket.io';
   },
 })
 export class EventsGateway {
+  constructor(private messagesService: MessagesService) {}
   @WebSocketServer() server: Server;
 
   @SubscribeMessage('chat')
-  handleChatEvent(@MessageBody() data: any): void {
-    this.server.emit('chat', data);
+  handleChatEvent(@MessageBody() message: CreateMessageDto): void {
+    this.messagesService.create(message);
+    this.server.emit('chat', message);
   }
 
   @SubscribeMessage('typing')
   handleTypingEvent(
-    @MessageBody() data: any,
+    @MessageBody() message: CreateMessageDto,
     @ConnectedSocket() client: Socket,
   ): void {
-    this.server.emit('typing', data);
-    client.broadcast.emit('typing', data);
+    this.server.emit('typing', message);
+    client.broadcast.emit('typing', message);
   }
 
-  handleConnection(@ConnectedSocket() client: any) {
+  handleConnection(@ConnectedSocket() client: Socket) {
     console.log(`${new Date()} - New connection ${client.id}`);
   }
 }
