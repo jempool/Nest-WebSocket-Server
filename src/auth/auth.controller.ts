@@ -21,4 +21,13 @@ export class AuthController {
       signUpDto.password,
     );
   }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('refresh')
+  refreshToken(@Body() refreshDto: Record<string, any>) {
+    return this.authService.refreshToken(
+      refreshDto.email,
+      refreshDto.refreshToken,
+    );
+  }
 }

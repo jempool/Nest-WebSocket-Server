@@ -27,10 +27,13 @@ export class AuthService {
     const payload = { name: user.name, email: user.email };
     return {
       user: payload,
-      access_token: await this.jwtService.signAsync(payload),
-      refreshToken: await this.jwtService.signAsync(payload, {
-        expiresIn: REFRESH_TOKEN_EXPIRES_IN,
-      }),
+      accessToken: await this.jwtService.signAsync({ user: payload }),
+      refreshToken: await this.jwtService.signAsync(
+        { user: payload },
+        {
+          expiresIn: REFRESH_TOKEN_EXPIRES_IN,
+        },
+      ),
     };
   }
 
@@ -45,10 +48,24 @@ export class AuthService {
     const payload = { name: name, email: email };
     return {
       user: payload,
-      access_token: await this.jwtService.signAsync(payload),
-      refreshToken: await this.jwtService.signAsync(payload, {
-        expiresIn: REFRESH_TOKEN_EXPIRES_IN,
-      }),
+      accessToken: await this.jwtService.signAsync({ user: payload }),
+      refreshToken: await this.jwtService.signAsync(
+        { user: payload },
+        { expiresIn: REFRESH_TOKEN_EXPIRES_IN },
+      ),
+    };
+  }
+
+  async refreshToken(email: string, refreshToken: string) {
+    const token = await this.jwtService.verifyAsync(refreshToken);
+    const isValid = token.user.email === email;
+    if (!isValid) {
+      throw new UnauthorizedException();
+    }
+    const payload = { name: token.user.name, email: token.user.email };
+    return {
+      user: payload,
+      accessToken: await this.jwtService.signAsync({ user: payload }),
     };
   }
 }
