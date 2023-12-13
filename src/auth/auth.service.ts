@@ -1,5 +1,5 @@
 import {
-  ConflictException,
+  BadRequestException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -40,7 +40,9 @@ export class AuthService {
   async signUp(name: string, email: string, password: string) {
     const user = await this.usersService.findOne(email);
     if (user) {
-      throw new ConflictException();
+      throw new BadRequestException(
+        `The email ${email} is already associated with an account`,
+      );
     }
     const saltOrRounds = 10;
     const hash = await bcrypt.hash(password, saltOrRounds);

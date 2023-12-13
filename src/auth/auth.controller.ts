@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  HttpException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 
@@ -8,8 +15,15 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: Record<string, any>) {
-    return this.authService.signIn(signInDto.email, signInDto.password);
+  async signIn(@Body() signInDto: Record<string, any>) {
+    try {
+      return await this.authService.signIn(signInDto.email, signInDto.password);
+    } catch (error) {
+      throw new HttpException(
+        'Incorrect email or password.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   @HttpCode(HttpStatus.OK)
