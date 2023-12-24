@@ -7,6 +7,8 @@ export type TopicDocument = HydratedDocument<Topic>;
 export class Topic {
   @Prop({ required: true })
   topic: string;
+  @Prop({ required: true })
+  forDate: Date;
 }
 
 export const TopicSchema = SchemaFactory.createForClass(Topic);
