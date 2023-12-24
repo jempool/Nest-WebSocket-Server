@@ -7,12 +7,6 @@ export class TopicsController {
   constructor(private readonly topicsService: TopicsService) {}
 
   @UseGuards(AuthGuard)
-  @Get()
-  findAll() {
-    return this.topicsService.findAll();
-  }
-
-  @UseGuards(AuthGuard)
   @Get('today')
   findTodaysTopic() {
     return this.topicsService.findTodaysTopic();
